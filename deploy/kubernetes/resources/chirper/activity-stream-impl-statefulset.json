@@ -1,0 +1,55 @@
+{
+  "apiVersion": "apps/v1beta1",
+  "kind": "StatefulSet",
+  "metadata": {
+    "name": "activityservice"
+  },
+  "spec": {
+    "serviceName": "activityservice",
+    "replicas": 1,
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "activityservice"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "activityservice",
+            "image": "chirper/activity-stream-impl",
+            "imagePullPolicy": "Always",
+            "ports": [
+              {
+                "containerPort": 9000,
+                "name": "http-lagom-api"
+              }
+            ],
+            "env": [
+              {
+                "name": "APPLICATION_SECRET",
+                "value": "2pRmj6e:mR[5]13FmJg]rDEMCtiYhbN[Z=Kf2b3Enk1>Ai`tM1H:aD17]os?;fVq"
+              },
+              {
+                "name": "ACTIVITYSERVICE_BIND_PORT",
+                "value": "9000"
+              },
+              {
+                "name": "ACTIVITYSERVICE_BIND_IP",
+                "value": "0.0.0.0"
+              }
+            ],
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/api/activity/health",
+                "port": 9000
+              },
+              "initialDelaySeconds": 50,
+              "periodSeconds": 50
+            }
+          }
+        ]
+      }
+    }
+  }
+}

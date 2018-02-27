@@ -1,0 +1,83 @@
+{
+  "apiVersion": "apps/v1beta1",
+  "kind": "StatefulSet",
+  "metadata": {
+    "name": "chirpservice"
+  },
+  "spec": {
+    "serviceName": "chirpservice",
+    "replicas": 1,
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "chirpservice"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "chirpservice",
+            "image": "chirper/chirp-impl",
+            "imagePullPolicy": "Always",
+            "ports": [
+              {
+                "containerPort": 9000,
+                "name": "http-lagom-api"
+              },
+              {
+                "containerPort": 2551,
+                "name": "akka-remote"
+              }
+            ],
+            "env": [
+              {
+                "name": "APPLICATION_SECRET",
+                "value": "2pRmj6e:mR[5]13FmJg]rDEMCtiYhbN[Z=Kf2b3Enk1>Ai`tM1H:aD17]os?;fVq"
+              },
+              {
+                "name": "CASSANDRA_SERVICE_NAME",
+                "value": "_native._tcp.cassandra.default.svc.cluster.local"
+              },
+              {
+                "name": "CHIRPSERVICE_BIND_PORT",
+                "value": "9000"
+              },
+              {
+                "name": "CHIRPSERVICE_BIND_IP",
+                "value": "0.0.0.0"
+              },
+              {
+                "name": "AKKA_REMOTING_PORT",
+                "value": "2551"
+              },
+              {
+                "name": "AKKA_REMOTING_BIND_PORT",
+                "value": "2551"
+              },
+              {
+                "name": "AKKA_REMOTING_HOST",
+                "value": "$HOSTNAME.chirpservice.default.svc.cluster.local"
+              },
+              {
+                "name": "AKKA_REMOTING_BIND_HOST",
+                "value": "$HOSTNAME.chirpservice.default.svc.cluster.local"
+              },
+              {
+                "name": "AKKA_SEED_NODES",
+                "value": "chirpservice-0.chirpservice.default.svc.cluster.local:2551,chirpservice-1.chirpservice.default.svc.cluster.local:2551,chirpservice-2.chirpservice.default.svc.cluster.local:2551"
+              }
+            ],
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/api/chirps/health",
+                "port": 9000
+              },
+              "initialDelaySeconds": 5,
+              "periodSeconds": 5
+            }
+          }
+        ]
+      }
+    }
+  }
+}

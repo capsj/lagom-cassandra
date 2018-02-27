@@ -1,0 +1,52 @@
+{
+  "apiVersion": "apps/v1beta1",
+  "kind": "StatefulSet",
+  "metadata": {
+    "name": "web"
+  },
+  "spec": {
+    "serviceName": "web",
+    "replicas": 1,
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "web"
+        }
+      },
+      "spec": {
+        "containers": [
+          {
+            "name": "web",
+            "image": "chirper/front-end",
+            "imagePullPolicy": "Always",
+            "ports": [
+              { "containerPort": 9000 }
+            ],
+            "env": [
+              {
+                "name": "APPLICATION_SECRET",
+                "value": "2pRmj6e:mR[5]13FmJg]rDEMCtiYhbN[Z=Kf2b3Enk1>Ai`tM1H:aD17]os?;fVq"
+              },
+              {
+                "name": "WEB_BIND_PORT",
+                "value": "9000"
+              },
+              {
+                "name": "WEB_BIND_IP",
+                "value": "0.0.0.0"
+              }
+            ],
+            "readinessProbe": {
+              "httpGet": {
+                "path": "/",
+                "port": 9000
+              },
+              "initialDelaySeconds": 5,
+              "periodSeconds": 5
+            }
+          }
+        ]
+      }
+    }
+  }
+}
